@@ -1,0 +1,33 @@
+{
+  "name": "ap-lib/routing-builder",
+  "description": "",
+  "type": "library",
+  "homepage": "https://github.com/ap-lib/routing-builder",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Anton Panfilov"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "AP\\Routing\\Builder\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AP\\Routing\\Builder\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^8.3",
+    "ap-lib/routing": "dev-main",
+    "ap-lib/directory-class-finder": "dev-main",
+    "ap-lib/logger": "dev-main"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "10.5.*"
+  }
+}
