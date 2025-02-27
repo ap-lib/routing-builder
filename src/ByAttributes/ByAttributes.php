@@ -24,6 +24,7 @@ class ByAttributes implements BuilderInterface
         protected bool   $recursive = true,
     )
     {
+        $this->directory = realpath($this->directory);
     }
 
     /**
@@ -31,6 +32,12 @@ class ByAttributes implements BuilderInterface
      */
     public function getClasses(): Generator
     {
+        Log::debug(
+            "scan directory: $this->directory",
+            [],
+            self::LOG_NAME
+        );
+
         return (new DirectoryClassFinderComposerPSR4(
             include_vendor_classes: str_starts_with(
                 $this->directory,
@@ -129,7 +136,7 @@ class ByAttributes implements BuilderInterface
             Log::debug(
                 "classes found",
                 $this->getClasses(),
-                "ap:"
+                self::LOG_NAME
             );
             $this->modifyIndexForOneClass($class, $index);
         }
