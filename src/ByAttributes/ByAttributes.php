@@ -58,8 +58,9 @@ class ByAttributes implements BuilderInterface
      * @return void
      * @throws ReflectionException
      */
-    public function modifyIndexForOneClass(string $class, IndexInterface &$index): void
+    public function modifyIndexForOneClass(string $class, IndexInterface &$index): int
     {
+        $endpounts          = 0;
         $classRef           = new ReflectionClass($class);
         $classRouteGroupRef = $classRef->getAttributes(RouteGroup::class, ReflectionAttribute::IS_INSTANCEOF);
         if (count($classRouteGroupRef) > 1) {
@@ -84,8 +85,11 @@ class ByAttributes implements BuilderInterface
                     $routeRef->newInstance(),
                     $routeGroup
                 );
+                $endpounts++;
             }
         }
+
+        return $endpounts;
     }
 
     protected function modifyIndexForOneRoute(
@@ -116,7 +120,9 @@ class ByAttributes implements BuilderInterface
             $middleware = self::modifyMiddlewares($class, $route->middleware);
         }
 
+        $methods = [];
         foreach ($route->methods as $method) {
+            $methods[] = $method->value;
             $index->addEndpoint(
                 $method,
                 $routeGroup instanceof RouteGroup
@@ -128,18 +134,32 @@ class ByAttributes implements BuilderInterface
                 )
             );
         }
+
+        Log::debug(
+            "endpoint founded: (" . implode(", ", $methods) . ") $class::{$methodRef->getName()}",
+            [],
+            self::LOG_NAME
+        );
     }
 
     public function modifyIndex(IndexInterface &$index): void
     {
+        $endpoints = 0;
+
         foreach ($this->getClasses() as $class) {
             Log::debug(
                 "class found: " . $class,
                 [],
                 self::LOG_NAME
             );
-            $this->modifyIndexForOneClass($class, $index);
+            $endpoints += $this->modifyIndexForOneClass($class, $index);
         }
+
+        Log::debug(
+            "endpoints founded: $endpoints",
+            [],
+            self::LOG_NAME
+        );
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////
