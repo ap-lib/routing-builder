@@ -134,8 +134,8 @@ class ByAttributes implements BuilderInterface
     {
         foreach ($this->getClasses() as $class) {
             Log::debug(
-                "classes found",
-                $this->getClasses(),
+                "class found: " . $class,
+                [],
                 self::LOG_NAME
             );
             $this->modifyIndexForOneClass($class, $index);
