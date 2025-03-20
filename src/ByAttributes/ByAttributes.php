@@ -120,14 +120,16 @@ class ByAttributes implements BuilderInterface
             $middleware = self::modifyMiddlewares($class, $route->middleware);
         }
 
+        $path = $routeGroup instanceof RouteGroup
+            ? $routeGroup->path . $route->path
+            : $route->path;
+
         $methods = [];
         foreach ($route->methods as $method) {
             $methods[] = $method->value;
             $index->addEndpoint(
                 $method,
-                $routeGroup instanceof RouteGroup
-                    ? $routeGroup->path . $route->path
-                    : $route->path,
+                $path,
                 new Endpoint(
                     $class . "::" . $methodRef->getName(),
                     $middleware
@@ -136,7 +138,7 @@ class ByAttributes implements BuilderInterface
         }
 
         Log::debug(
-            "endpoint founded: (" . implode(", ", $methods) . ") $class::{$methodRef->getName()}",
+            "(" . implode(", ", $methods) . ") $path -> $class::{$methodRef->getName()}",
             [],
             self::LOG_NAME
         );
@@ -147,11 +149,6 @@ class ByAttributes implements BuilderInterface
         $endpoints = 0;
 
         foreach ($this->getClasses() as $class) {
-            Log::debug(
-                "class founded: " . $class,
-                [],
-                self::LOG_NAME
-            );
             $endpoints += $this->modifyIndexForOneClass($class, $index);
         }
 
